@@ -2,7 +2,7 @@
  *
  * Something in between 'cat' and 'wc -l'
  *
- * Copyright (C)2008 Valentin Hilbig <webmaster@scylla-charybdis.com>
+ * Copyright (C)2009 Valentin Hilbig <webmaster@scylla-charybdis.com>
  *
  * This is release early code.  Use at own risk.
  *
@@ -22,9 +22,11 @@
  * 02110-1301 USA.
  *
  * $Log$
+ * Revision 1.2  2009-03-24 03:15:33  tino
+ * Usage corrected, slew corrected (option -c)
+ *
  * Revision 1.1  2009-03-24 02:24:40  tino
  * First version
- *
  */
 
 #include "tino/alarm.h"
@@ -66,10 +68,12 @@ tino_scale_slew_avg(short n, short m, unsigned long long count, unsigned long lo
     delta	= 1;
 
   if ((slew->samples+=delta)>TINO_SCALE_SLEW_HISTORY)
-    slew->samples	= TINO_SCALE_SLEW_HISTORY;
-
-  slew->average	-= (slew->average*delta+TINO_SCALE_SLEW_HISTORY-1)/TINO_SCALE_SLEW_HISTORY;
+    {
+      slew->average	-= (slew->average*(slew->samples-TINO_SCALE_SLEW_HISTORY)+TINO_SCALE_SLEW_HISTORY-1)/TINO_SCALE_SLEW_HISTORY;
+      slew->samples	= TINO_SCALE_SLEW_HISTORY;
+    }
   slew->average	+= (count-slew->last)*delta;
+  slew->last	=  count;
   slew->ts	=  ts;
 
   return tino_scale_speed(n, slew->average, (unsigned long long)slew->samples, minext, width);
@@ -121,7 +125,7 @@ main(int argc, char **argv)
 		      TINO_GETOPT_DEFAULT
 		      TINO_GETOPT_MIN
 		      TINO_GETOPT_MAX
-		      "b bytes	count Blocks of given size, not lines.\n"
+		      "b byte	count Blocks of given size, not lines.\n"
 		      "		This also is the default blocksize for I/O.\n"
 		      "		Give it as 0 to count bytes with a default blocksize"
 		      , &bs,
@@ -137,14 +141,14 @@ main(int argc, char **argv)
 		      TINO_GETOPT_SUFFIX
 		      TINO_GETOPT_MIN
 		      TINO_GETOPT_MAX
-		      "i bytes	Input blocksize, defaults to -b"
+		      "i byte	Input blocksize, defaults to -b"
 		      , &ibs,
 		      0,
 		      0x3fffffff,
 
 		      TINO_GETOPT_ULLONG
 		      TINO_GETOPT_SUFFIX
-		      "m bytes	Maximum transfer size, shows percentage, too.\n"
+		      "m max	Maximum transfer size, shows percentage, too.\n"
 		      "		Note that this is accoring to -b, not bytes."
 		      , &max,
 		      
@@ -152,7 +156,7 @@ main(int argc, char **argv)
 		      TINO_GETOPT_SUFFIX
 		      TINO_GETOPT_MIN
 		      TINO_GETOPT_MAX
-		      "o bytes	Output blocksize, defaults to -b"
+		      "o byte	Output blocksize, defaults to -b"
 		      , &obs,
 		      0,
 		      0x3fffffff,

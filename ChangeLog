@@ -1,0 +1,4 @@
+2009-03-24  Valentin Hilbig  <tino@firebird.03.softkill.net>
+
+	* count.c (tino_scale_slew_avg): slew corrected
+
