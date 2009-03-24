@@ -22,6 +22,9 @@
  * 02110-1301 USA.
  *
  * $Log$
+ * Revision 1.3  2009-03-24 17:38:11  tino
+ * Option -c should work now
+ *
  * Revision 1.2  2009-03-24 03:15:33  tino
  * Usage corrected, slew corrected (option -c)
  *
@@ -35,49 +38,6 @@
 #include "tino/scale.h"
 
 #include "count_version.h"
-
-#define TINO_SCALE_SLEW_HISTORY	100
-
-/* This uses two AUXBUFs
- *
- * The second one is used to keep the old information around.
- *
- * IT MUST BE UNUSED (or freed) BEFORE 
- */
-static const char *
-tino_scale_slew_avg(short n, short m, unsigned long long count, unsigned long long ts, int minext, int width)
-{
-  struct scaler
-    {
-      unsigned long long	last, average, ts;
-      unsigned			samples;
-    }	*slew;
-  int	delta;
-
-  slew	= tino_auxbufOn(m, sizeof *slew);
-
-  delta	= 1;
-  if (slew->ts>ts)
-    slew->samples	= 0;
-  if (ts && slew->ts)
-    delta	= slew->ts-ts;
-
-  if (delta>TINO_SCALE_SLEW_HISTORY)
-    delta	= TINO_SCALE_SLEW_HISTORY;
-  if (delta<1)
-    delta	= 1;
-
-  if ((slew->samples+=delta)>TINO_SCALE_SLEW_HISTORY)
-    {
-      slew->average	-= (slew->average*(slew->samples-TINO_SCALE_SLEW_HISTORY)+TINO_SCALE_SLEW_HISTORY-1)/TINO_SCALE_SLEW_HISTORY;
-      slew->samples	= TINO_SCALE_SLEW_HISTORY;
-    }
-  slew->average	+= (count-slew->last)*delta;
-  slew->last	=  count;
-  slew->ts	=  ts;
-
-  return tino_scale_speed(n, slew->average, (unsigned long long)slew->samples, minext, width);
-}
 
 static unsigned long long	count, total, max;
 static int			bs, current;
