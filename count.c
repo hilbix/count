@@ -22,6 +22,9 @@
  * 02110-1301 USA.
  *
  * $Log$
+ * Revision 1.4  2009-05-23 17:01:47  tino
+ * Usage corrected
+ *
  * Revision 1.3  2009-03-24 17:38:11  tino
  * Option -c should work now
  *
@@ -109,7 +112,7 @@ main(int argc, char **argv)
 		      TINO_GETOPT_ULLONG
 		      TINO_GETOPT_SUFFIX
 		      "m max	Maximum transfer size, shows percentage, too.\n"
-		      "		Note that this is accoring to -b, not bytes."
+		      "		Note that this is according to -b, not bytes."
 		      , &max,
 		      
 		      TINO_GETOPT_INT
