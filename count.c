@@ -22,6 +22,9 @@
  * 02110-1301 USA.
  *
  * $Log$
+ * Revision 1.5  2009-05-23 17:04:58  tino
+ * Names lowercase
+ *
  * Revision 1.4  2009-05-23 17:01:47  tino
  * Usage corrected
  *
@@ -54,7 +57,7 @@ progress(void *user, long delta, time_t now, long run)
   fprintf(stderr,	"%llu",		count								);
   if (max)
     fprintf(stderr,	"/%llu",	max								);
-  fprintf(stderr,	" %s",		(bs<0 ? "Lines" : ( bs>0 ? "Blocks" : "Byte") )			);
+  fprintf(stderr,	" %s",		(bs<0 ? "lines" : ( bs>0 ? "blocks" : "byte") )			);
   if (current)
     fprintf(stderr,	" at %s/s",	tino_scale_slew_avg(3,4, count, (unsigned long long)run, 0, -6)	);
   fprintf(stderr,	" %siB/s ",	tino_scale_speed(1, total, (unsigned long long)run, 0, -6)	);
