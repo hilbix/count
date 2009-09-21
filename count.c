@@ -22,6 +22,9 @@
  * 02110-1301 USA.
  *
  * $Log$
+ * Revision 1.8  2009-09-21 20:34:17  tino
+ * Option -n
+ *
  * Revision 1.7  2009-09-21 20:30:34  tino
  * CR on previous progress output on option -f
  *
@@ -54,7 +57,7 @@
 static unsigned long long	count, total, max;
 static int			bs, current;
 static unsigned long long	lastrun;
-static int			flag_final, had_progress;
+static int			flag_final, flag_no, had_progress;
 
 static void
 show_progress(FILE *fd)
@@ -81,7 +84,8 @@ static int
 progress(void *user, long delta, time_t now, long run)
 {
   lastrun	= run;
-  show_progress(stderr);
+  if (!flag_no)
+    show_progress(stderr);
   return 0;
 }
 
@@ -151,6 +155,10 @@ main(int argc, char **argv)
 		      "		Note that this is according to -b, not bytes."
 		      , &max,
 		      
+		      TINO_GETOPT_FLAG
+		      "n	do Not show progress output"
+		      , &flag_no,
+
 		      TINO_GETOPT_INT
 		      TINO_GETOPT_SUFFIX
 		      TINO_GETOPT_MIN

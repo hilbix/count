@@ -1,3 +1,4 @@
-Option -f improved
+Option -f improved, option -n added
 
 Now a CR is printed when there was progress output previously.
+With option -n the progress output can be disabled now, too.
