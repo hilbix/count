@@ -1,3 +1,4 @@
-Option -c corrected again
+Option -f added
 
-Installs into /usr/local/bin now
+This option outputs a final count status when success,
+such that you always see the counts.

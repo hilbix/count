@@ -22,6 +22,9 @@
  * 02110-1301 USA.
  *
  * $Log$
+ * Revision 1.6  2009-09-21 20:23:19  tino
+ * Option -f
+ *
  * Revision 1.5  2009-05-23 17:04:58  tino
  * Names lowercase
  *
@@ -47,24 +50,45 @@
 
 static unsigned long long	count, total, max;
 static int			bs, current;
+static unsigned long long	lastrun;
+static int			flag_final;
+
+static void
+show_progress(FILE *fd)
+{
+  fprintf(fd,	"%s ",		tino_scale_interval(0, (long)lastrun, 1, -7)	);
+  if (max)
+    fprintf(fd,	"%s%% ",	tino_scale_percent(2, count, max, -5)		);
+  fprintf(fd,	"%llu",		count						);
+  if (max)
+    fprintf(fd,	"/%llu",	max						);
+  fprintf(fd,	" %s",		(bs<0 ? "lines" : ( bs>0 ? "blocks" : "byte") )	);
+  if (current)
+    fprintf(fd,	" at %s/s",	tino_scale_slew_avg(3,4, count, lastrun, 0, -6)	);
+  fprintf(fd,	" %siB/s ",	tino_scale_speed(1, total, lastrun, 0, -6)	);
+  if (current)
+    fprintf(fd,	" at %siB/s",	tino_scale_slew_avg(5,6, total, lastrun, 0, -6)	);
+  fflush(fd);
+}
 
 static int
 progress(void *user, long delta, time_t now, long run)
 {
-  fprintf(stderr,	"\r%s ",	tino_scale_interval(0, run, 1, -7)				);
-  if (max)
-    fprintf(stderr,	"%s%% ",	tino_scale_percent(2, count, max, -5)				);
-  fprintf(stderr,	"%llu",		count								);
-  if (max)
-    fprintf(stderr,	"/%llu",	max								);
-  fprintf(stderr,	" %s",		(bs<0 ? "lines" : ( bs>0 ? "blocks" : "byte") )			);
-  if (current)
-    fprintf(stderr,	" at %s/s",	tino_scale_slew_avg(3,4, count, (unsigned long long)run, 0, -6)	);
-  fprintf(stderr,	" %siB/s ",	tino_scale_speed(1, total, (unsigned long long)run, 0, -6)	);
-  if (current)
-    fprintf(stderr,	" at %siB/s",	tino_scale_slew_avg(5,6, total, (unsigned long long)run, 0, -6)	);
-  fflush(stderr);
+  putc('\r', stderr);
+  lastrun	= run;
+  show_progress(stderr);
   return 0;
+}
+
+static int
+fin(int ret)
+{
+  if (flag_final)
+    {
+      show_progress(stderr);
+      putc('\n', stderr);
+    }
+  exit(ret);
 }
 
 int
@@ -102,6 +126,10 @@ main(int argc, char **argv)
 		      TINO_GETOPT_FLAG
 		      "c	show Current average speed (1/100)"
 		      , &current,
+
+		      TINO_GETOPT_FLAG
+		      "f	show Final status"
+		      , &flag_final,
 
 		      TINO_GETOPT_INT
 		      TINO_GETOPT_SUFFIX
@@ -175,7 +203,7 @@ main(int argc, char **argv)
 	  if (tino_buf_write_away_allE(&buf, 1, max))
 	    {
 	      perror("write");
-	      return 2;
+	      fin(2);
 	    }
 	  len	-= max;
 	}
@@ -187,5 +215,6 @@ main(int argc, char **argv)
        */
     }
   tino_buf_freeO(&buf);
+  fin(0);
   return 0;
 }
