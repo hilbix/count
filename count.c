@@ -22,6 +22,9 @@
  * 02110-1301 USA.
  *
  * $Log$
+ * Revision 1.7  2009-09-21 20:30:34  tino
+ * CR on previous progress output on option -f
+ *
  * Revision 1.6  2009-09-21 20:23:19  tino
  * Option -f
  *
@@ -51,11 +54,13 @@
 static unsigned long long	count, total, max;
 static int			bs, current;
 static unsigned long long	lastrun;
-static int			flag_final;
+static int			flag_final, had_progress;
 
 static void
 show_progress(FILE *fd)
 {
+  if (had_progress)
+    putc('\r', fd);
   fprintf(fd,	"%s ",		tino_scale_interval(0, (long)lastrun, 1, -7)	);
   if (max)
     fprintf(fd,	"%s%% ",	tino_scale_percent(2, count, max, -5)		);
@@ -69,12 +74,12 @@ show_progress(FILE *fd)
   if (current)
     fprintf(fd,	" at %siB/s",	tino_scale_slew_avg(5,6, total, lastrun, 0, -6)	);
   fflush(fd);
+  had_progress	= 1;
 }
 
 static int
 progress(void *user, long delta, time_t now, long run)
 {
-  putc('\r', stderr);
   lastrun	= run;
   show_progress(stderr);
   return 0;

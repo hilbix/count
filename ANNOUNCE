@@ -1,4 +1,3 @@
-Option -f added
+Option -f improved
 
-This option outputs a final count status when success,
-such that you always see the counts.
+Now a CR is printed when there was progress output previously.
