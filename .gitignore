@@ -1,0 +1,5 @@
+*.d
+*.o
+*~
+count
+count_version.h
