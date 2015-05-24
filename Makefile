@@ -1,7 +1,7 @@
 # Makefile automatically generated, do not edit!
 # This output (only this Makefile) is Public Domain.
 #
-#@MD5TINOIGN@ Creation date: Sun May 10 14:08:59 CEST 2015
+#@MD5TINOIGN@ Creation date: Sun May 24 21:37:56 CEST 2015
 #
 # This file is based on following files:
 #@MD5TINOIGN@ 1: Makefile.tino
@@ -169,5 +169,10 @@ $(PROG1):	$(PROG1).o $(OBJS) $(LIBS)
 # compiler generated dependencies, remove if incorrect
 
 # included: count.d
-$(PROG1).o:
+$(PROG1).o:  count.c tino/alarm.h tino/file.h tino/sysfix.h \
+ tino/sysfix_cygwin.h tino/sysfix_diet.h tino/type.h tino/fatal.h \
+ tino/ex.h tino/arg.h tino/alloc.h tino/err.h tino/debug.h tino/signals.h \
+ tino/buf_line.h tino/buf.h tino/codec.h tino/getopt.h tino/scale.h \
+ tino/auxbuf.h count_version.h
+
 # end
