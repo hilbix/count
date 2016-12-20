@@ -1,50 +1,7 @@
-/* $Header$
+/* Something in between 'cat' and 'wc -l'
  *
- * Something in between 'cat' and 'wc -l'
- *
- * Copyright (C)2009 Valentin Hilbig <webmaster@scylla-charybdis.com>
- *
- * This is release early code.  Use at own risk.
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA.
- *
- * $Log$
- * Revision 1.8  2009-09-21 20:34:17  tino
- * Option -n
- *
- * Revision 1.7  2009-09-21 20:30:34  tino
- * CR on previous progress output on option -f
- *
- * Revision 1.6  2009-09-21 20:23:19  tino
- * Option -f
- *
- * Revision 1.5  2009-05-23 17:04:58  tino
- * Names lowercase
- *
- * Revision 1.4  2009-05-23 17:01:47  tino
- * Usage corrected
- *
- * Revision 1.3  2009-03-24 17:38:11  tino
- * Option -c should work now
- *
- * Revision 1.2  2009-03-24 03:15:33  tino
- * Usage corrected, slew corrected (option -c)
- *
- * Revision 1.1  2009-03-24 02:24:40  tino
- * First version
+ * This Works is placed under the terms of the Copyright Less License,
+ * see file COPYRIGHT.CLL.  USE AT OWN RISK, ABSOLUTELY NO WARRANTY.
  */
 
 #include "tino/alarm.h"
@@ -58,6 +15,7 @@ static unsigned long long	count, total, max;
 static int			bs, current;
 static unsigned long long	lastrun;
 static int			flag_final, flag_no, had_progress;
+static int			flag_zero;
 
 static void
 show_progress(FILE *fd)
@@ -168,6 +126,11 @@ main(int argc, char **argv)
 		      0,
 		      0x3fffffff,
 
+		      TINO_GETOPT_FLAG
+		      "z	count NUL-terminated strings (for: find -print0)\n"
+		      "		Please note that NUL always acts as line terminator anyway"
+		      , &flag_zero,
+
 		      NULL
 		      );
   if (argn<=0)
@@ -195,7 +158,7 @@ main(int argc, char **argv)
 	  int	pos;
 
 	  /* count the lines in the buffer	*/
-	  for (pos=min; (pos=tino_buf_line_scan(&buf, '\n', pos))<0; )
+	  for (pos=min; (pos=tino_buf_line_scan(&buf, flag_zero ? 0 : '\n', pos))<0; )
 	    {
               pos	= -pos;
 	      count++;
