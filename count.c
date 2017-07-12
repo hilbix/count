@@ -58,6 +58,20 @@ fin(int ret)
   exit(ret);
 }
 
+/* ideas: free flags: g jk xy */
+/* Afile append output to given file (instead -d) */
+/* Dn output to the given FD (leaves STDERR to exec) */
+/* E exec command, count output of it, allows cmd args.. and return status of cmd */
+/* L only count real (nonempty) lines */
+/* Ps prefix string to output of final status */
+/* Q do not output progress to given file (allows -a and -d) */
+/* Rn read the given file descriptor (for exec) */
+/* S count spaces, possibly needs -l to ignore spans of spaces */
+/* T change terminator character (cannot be used with -s) */
+/* U unbuffered output (write partial output blocks on BS) */
+/* V verbose */
+/* Wn write to the given file descriptor */
+
 int
 main(int argc, char **argv)
 {
@@ -114,7 +128,8 @@ main(int argc, char **argv)
 		      , &max,
 		      
 		      TINO_GETOPT_FLAG
-		      "n	do Not show progress output"
+		      "n	do Not show progress output\n"
+		      "		With -f this only outputs the final status"
 		      , &flag_no,
 
 		      TINO_GETOPT_INT
